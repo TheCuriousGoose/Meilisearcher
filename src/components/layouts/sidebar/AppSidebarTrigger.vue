@@ -1,8 +1,7 @@
 <template>
-    <Button variant="ghost" @click="toggleSidebar">
-        <PanelLeftClose v-if="state == 'expanded'" />
-        <PanelLeft v-else />
-        <span>Toggle sidebar</span>
+    <Button variant="ghost" @click="toggleSidebar" size="icon" >
+        <PanelLeft v-if="state == 'expanded'" class="w-5" />
+        <PanelLeftClose v-else class="w-5" />
     </Button>
 </template>
 

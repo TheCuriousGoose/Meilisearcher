@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.11",
+    "@types/vue-router": "^2.0.0",
     "@vueuse/core": "^13.6.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -25,7 +26,7 @@
     "tailwindcss": "^4.1.11",
     "tw-animate-css": "^1.3.6",
     "vue": "^3.4.29",
-    "vue-router": "^4.3.3"
+    "vue-router": "^4.5.1"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.8.0",
@@ -40,7 +41,7 @@
     "npm-run-all2": "^6.2.0",
     "prettier": "^3.2.5",
     "typescript": "~5.4.0",
-    "vite": "^5.3.1",
-    "vue-tsc": "^2.0.21"
+    "vite": "^5.4.19",
+    "vue-tsc": "^2.2.12"
   }
 }

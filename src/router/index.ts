@@ -9,7 +9,7 @@ const router = createRouter({
       component: () => import('../views/HomeView.vue')
     },
     {
-      'path': '/config/new',
+      path: '/config/new',
       name: 'config-create',
       component: () => import('../views/configs/CreateConfig.vue')
     }
