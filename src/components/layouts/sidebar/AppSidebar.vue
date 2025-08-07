@@ -2,7 +2,7 @@
     <Sidebar>
         <AppSidebarHeader />
         <SidebarContent>
-            <AppSidebarGroup label="Application">
+            <AppSidebarGroup label="Configurations">
                 <AppSidebarMenuItem to="/config/new">
                     <template #default>
                         <Plus class="w-4 h-4 mr-2" />

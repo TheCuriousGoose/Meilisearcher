@@ -5,6 +5,7 @@
             <div data-orientation="vertical" role="none" class="shrink-0 bg-border w-px mr-2 h-4"></div>
             <AppBreadcrumb />
         </div>
+        <slot name="topbar-actions" />
     </div>
 </template>
 

@@ -9,9 +9,11 @@ import AppTopbar from './topbar/AppTopbar.vue';
 <template>
     <SidebarProvider>
         <AppSidebar />
-        <main>
+        <main class="w-full">
             <AppTopbar />
-            <slot />
+            <div class="px-4 w-full">
+                <slot />
+            </div>
         </main>
     </SidebarProvider>
 </template>
