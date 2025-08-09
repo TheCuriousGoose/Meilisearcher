@@ -1,6 +1,8 @@
 export interface MeilisearchConfig {
     name: string;
+    slug: string;
     status: 'up' | 'down' | 'unknown';
-    host: string;
-    apiKey?: string;
+    url: string;
+    port: number;
+    masterKey?: string;
 }

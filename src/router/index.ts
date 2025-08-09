@@ -14,7 +14,7 @@ const router = createRouter({
       component: () => import('../views/configs/CreateConfig.vue')
     },
     {
-      path: '/config/show/:id',
+      path: '/config/:slug',
       name: 'config-show',
       component: () => import('../views/configs/ShowConfig.vue')
     }

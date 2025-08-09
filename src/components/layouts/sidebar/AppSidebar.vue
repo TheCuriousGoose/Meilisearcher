@@ -9,7 +9,7 @@
                         <span>Add New</span>
                     </template>
                 </AppSidebarMenuItem>
-                <AppSidebarMenuItem v-for="config in configs" :key="config.name" :to="`/config/${config.name}`">
+                <AppSidebarMenuItem v-for="config in configs" :key="config.slug" :to="`/config/${config.slug}`">
                     <template #default>
                         {{ config.name }}
                         <SidebarMenuBadge>
