@@ -17,6 +17,10 @@ const router = createRouter({
       path: '/config/:slug',
       name: 'config-show',
       component: () => import('../views/configs/ShowConfig.vue')
+    },
+    {
+      path: '/:catchAll(.*)',
+      redirect: '/'
     }
   ]
 })

@@ -20,6 +20,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-vue-next": "^0.534.0",
+    "meilisearch": "^0.52.0",
     "pinia": "^2.1.7",
     "reka-ui": "^2.4.1",
     "sass": "^1.89.2",
@@ -29,7 +30,7 @@
     "vee-validate": "^4.15.1",
     "vue": "^3.4.29",
     "vue-router": "^4.5.1",
-    "vue-sonner": "^2.0.2",
+    "vue-sonner": "^2.0.8",
     "zod": "^3.25.76"
   },
   "devDependencies": {

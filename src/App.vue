@@ -1,9 +1,11 @@
 <script setup>
 import { RouterView } from 'vue-router';
 import { Toaster } from '@/components/ui/sonner';
+
+import 'vue-sonner/style.css';
 </script>
 
 <template>
   <RouterView />
-  <Toaster />
+  <Toaster position="top-right" />
 </template>

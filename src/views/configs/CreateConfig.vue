@@ -9,7 +9,7 @@
             </div>
             <Separator />
 
-            <form @submit="onSubmit" class="space-y-4">
+            <form @submit="onSubmit" class="space-y-4 max-w-4xl">
                 <FormField v-slot="{ componentField }" name="name">
                     <FormItem>
                         <FormLabel>Configuration Name</FormLabel>
@@ -52,13 +52,22 @@
                         <FormControl>
                             <Input type="password" placeholder="Enter master key if required" v-bind="componentField" />
                         </FormControl>
+                        <FormDescription>
+                            The master key for your Meilisearch instance, if authentication is enabled. This will only
+                            be stored locally
+                        </FormDescription>
                         <FormMessage />
                     </FormItem>
                 </FormField>
 
                 <div class="flex gap-4 pt-4">
-                    <Button type="submit">
+                    <Button type="submit" :disabled="isSubmitting || isTesting">
+                        <LoaderCircle v-if="isSubmitting" class="w-4 h-4 mr-2 animate-spin" />
                         Create Configuration
+                    </Button>
+                    <Button type="button" variant="outline" @click="testConnection" :disabled="isTesting">
+                        <LoaderCircle v-if="isTesting" class="w-4 h-4 mr-2 animate-spin" />
+                        Test Connection
                     </Button>
                     <Button type="button" variant="outline" @click="handleCancel">
                         Cancel
@@ -70,7 +79,7 @@
 </template>
 
 <script setup lang="ts">
-import { Plus } from 'lucide-vue-next';
+import { LoaderCircle, Plus } from 'lucide-vue-next';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import { useRouter } from 'vue-router';
@@ -92,10 +101,14 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import type { MeilisearchConfig } from '@/types/MeilisearchConfig';
 import { generateUniqueSlug } from '@/lib/utils';
+import { MeiliSearch } from 'meilisearch';
+import { ref } from 'vue';
+
+const isTesting = ref<boolean>(false);
+const isSubmitting = ref<boolean>(false);
 
 const router = useRouter();
 
-// Define the form schema using Zod
 const formSchema = toTypedSchema(z.object({
     name: z.string().min(1, 'Configuration name is required'),
     url: z.string().min(1, 'URL is required').url('Please enter a valid URL'),
@@ -106,7 +119,6 @@ const formSchema = toTypedSchema(z.object({
     masterKey: z.string().optional()
 }));
 
-// Create the form using vee-validate
 const form = useForm({
     validationSchema: formSchema,
     initialValues: {
@@ -117,46 +129,68 @@ const form = useForm({
     }
 });
 
-// Handle form submission
-const onSubmit = form.handleSubmit((values) => {
-    // Get existing configs from localStorage
-    const existingConfigs = localStorage.getItem('meilisearchConfig');
-    let configs: MeilisearchConfig[] = [];
+const testConnection = async () => {
+    isTesting.value = true;
 
-    if (existingConfigs) {
-        configs = JSON.parse(existingConfigs);
-    }
-
-    // Check if config with same name already exists
-    if (configs.some(c => c.name === values.name.trim())) {
-        toast.error('A configuration with this name already exists!');
+    const isValid = await form.validate();
+    if (!isValid.valid) {
+        isTesting.value = false;
+        toast.error('Please fix the validation errors before testing the connection.');
         return;
     }
 
-    // Generate unique slug
-    const slug = generateUniqueSlug(values.name, configs);
+    const meilisearchHost = form.values.url + ':' + form.values.port;
 
-    // Create the config object
-    const config: MeilisearchConfig = {
-        name: values.name.trim(),
-        slug: slug,
-        url: values.url.trim(),
-        port: values.port,
-        masterKey: values.masterKey?.trim() || undefined,
-        status: 'unknown'
-    };
+    const client = new MeiliSearch({
+        host: meilisearchHost,
+        apiKey: form.values.masterKey
+    })
 
-    // Add new config
-    configs.push(config);
+    client.health().then(() => {
+        toast.success('Connection successful!');
+    }).catch(() => {
+        toast.error('Connection failed. Please check your settings.');
+    }).finally(() => {
+        isTesting.value = false;
+    });
+}
 
-    // Save to localStorage
-    localStorage.setItem('meilisearchConfig', JSON.stringify(configs));
+const onSubmit = form.handleSubmit(async (values) => {
+    isSubmitting.value = true;
+    try {
+        const existingConfigs = localStorage.getItem('meilisearchConfig');
+        let configs: MeilisearchConfig[] = [];
 
-    // Show success message
-    toast.success('Configuration created successfully!');
+        if (existingConfigs) {
+            configs = JSON.parse(existingConfigs);
+        }
 
-    // Redirect to the config view using slug
-    router.push(`/config/${slug}`);
+        if (configs.some(c => c.name === values.name.trim())) {
+            toast.error('A configuration with this name already exists!');
+            return;
+        }
+
+        const slug = generateUniqueSlug(values.name, configs);
+
+        const config: MeilisearchConfig = {
+            name: values.name.trim(),
+            slug: slug,
+            url: values.url.trim(),
+            port: values.port,
+            masterKey: values.masterKey?.trim() || undefined,
+            status: 'unknown'
+        };
+
+        configs.push(config);
+
+        localStorage.setItem('meilisearchConfig', JSON.stringify(configs));
+
+        toast.success('Configuration created successfully!');
+
+        router.push(`/config/${slug}`);
+    } finally {
+        isSubmitting.value = false;
+    }
 });
 
 const handleCancel = () => {
